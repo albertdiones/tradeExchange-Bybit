@@ -3,7 +3,7 @@ api client for basic functions of bybit
 
 
 Todos:
- * [ ] Copy setup from bitfinex repo
+ * [ ] Copy setup/scripts from bitfinex repo
  * [ ] Copy tests from bitfinex repo
  * [ ] AssetWallet interface
  * [ ] TickerFetcher interface
