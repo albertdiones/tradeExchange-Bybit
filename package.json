@@ -1,0 +1,26 @@
+{
+    "name": "tradeexchange-bybit",
+    "module": "index.ts",
+    "type": "module",
+    "scripts": {
+      "loop-test": "while true; do bun test --timeout=20000; sleep 5; done",
+      "loop-validate": "while true; do bun test --timeout=20000; tsc --noEmit --pretty --skipLibCheck; sleep 5; done"
+    },
+    "devDependencies": {
+      "dotenv": "^16.4.5",
+      "@types/bun": "latest",
+      "jest": "^29.7.0"
+    },
+    "peerDependencies": {
+      "typescript": "^5.5.4"
+    },
+    "dependencies": {
+      "nonChalantJs": "albertdiones/nonChalant#main",
+      "tradeexchanges": "albertdiones/tradeExchanges#master",
+      "tradeorders": "albertdiones/tradeOrders#master"
+    },
+    "jest": {
+      "setupFiles": ["./test.setup.ts"],
+      "testTimeout": 20000
+    }
+  }
