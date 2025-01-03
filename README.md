@@ -8,4 +8,5 @@ Todos:
  * [ ] AssetWallet interface
  * [ ] TickerFetcher interface
  * [ ] CandleFetcher interface
+ * [ ] AssetWallet interface
  * [ ] OrderHandler interface
