@@ -1,11 +1,11 @@
 
 import type { AssetHolding, AssetWallet, CandleFetcher, Exchange, TickerFetcher } from 'tradeexchanges';
-import type { TickerData } from 'tradeexchanges/tradingCandles';
+import type { TickerCandle, TickerData } from 'tradeexchanges/tradingCandles';
 import HttpClient, { type ResponseDataWithCache } from 'nonChalantJs';
 
-interface BybitResponse {
+interface BybitResponse<listFormat> {
     result: {
-        list: BybitTickerData[]
+        list: listFormat
     }
 }
 
@@ -24,8 +24,24 @@ interface BybitTickerData {
     volume24h: string;
 }
 
+type CandleData = [
+    string, // timestamp
+    string, // openPrice
+    string, // highPrice
+    string, // lowPrice
+    string, // closePrice
+    string, // volume
+    string  // turnover
+];
+  
+  
+  
+  
+  
+  
 
-export class Bybit implements TickerFetcher {
+
+export class Bybit implements TickerFetcher, CandleFetcher {
 
 
     client: HttpClient;
@@ -37,13 +53,13 @@ export class Bybit implements TickerFetcher {
         this.options = options;
     }
 
-    _getMarketTickers(): Promise<{response: BybitResponse, fromCache: boolean}> {
+    _getMarketTickers(): Promise<{response: BybitResponse<BybitTickerData[]>, fromCache: boolean}> {
         return this.client.getWithCache(
             'https://api.bybit.com/v5/market/tickers?category=spot'
         ).then(
             (fetchResponse: ResponseDataWithCache) => {
                 return {
-                    response: fetchResponse.response as BybitResponse,
+                    response: fetchResponse.response as BybitResponse<BybitTickerData[]>,
                     fromCache: fetchResponse.fromCache
                 }
             }
@@ -86,5 +102,63 @@ export class Bybit implements TickerFetcher {
                     }
                 }
             );
+    }
+
+    _minutesToInterval(minutes: number): string {
+        switch (minutes) {            
+            case 1:
+            case 3:
+            case 5:
+            case 15:
+            case 30:
+            case 60:
+            case 120:
+            case 180:
+            case 240:
+            case 360:
+            case 720:
+                return `${minutes}`
+                break;
+
+            case 1440:
+                return 'D'
+                break;
+
+            case 10080:
+                return 'W';
+                break;
+            case 43200:
+                return 'M' 
+                break;
+
+            default:
+                throw `Unsupported interval: ${minutes}`;
+        }
+        
+    }
+
+    
+    fetchCandles(symbol: string, minutes: number, limit: number): Promise<TickerCandle[] | null> {
+        return this.client.getNoCache(`https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}&interval=${this._minutesToInterval(minutes)}&limit=${limit}`)
+            .then(
+                (response) => response as BybitResponse<CandleData[]>
+            )
+            .then(
+                (response: BybitResponse<CandleData[]>) => {
+                    return response.result.list.map(
+                        (exchangeCandle: CandleData) => ({
+                            open: parseFloat(exchangeCandle[1]),
+                            high: parseFloat(exchangeCandle[2]),
+                            low: parseFloat(exchangeCandle[3]),
+                            close: parseFloat(exchangeCandle[4]),
+                            open_timestamp: parseFloat(exchangeCandle[0]),
+                            close_timestamp: parseFloat(exchangeCandle[0]) 
+                                + (minutes * 60 * 1000) - 1,
+                            base_volume: parseFloat(exchangeCandle[5]),
+                            quote_volume: parseFloat(exchangeCandle[6]),
+                        })
+                    );                    
+                }
+            )
     }
 }

@@ -2,7 +2,6 @@ import type { TickerCandle } from "tradeexchanges/tradingCandles";
 import {exchange} from "./setup";
 import {describe, expect, test} from '@jest/globals';
 
-/*
 // Alternative source price
 async function cryptoPrice(asset: string): Promise<string> {
     return fetch("https://cryptoprices.cc/"+asset+"/").then(
@@ -10,9 +9,9 @@ async function cryptoPrice(asset: string): Promise<string> {
     );  
 }
   
-test('get MATIC candles', async () => {
+test('get ICPUSDT candles', async () => {
     const limit = 777;
-    const candles: TickerCandle[] | null  = await exchange.fetchCandles('tMATIC:USD', 5,limit);
+    const candles: TickerCandle[] | null  = await exchange.fetchCandles('ICPUSDT', 5,limit);
     
     expect(candles).not.toBeNull();
     
@@ -23,15 +22,16 @@ test('get MATIC candles', async () => {
     }
 
 
-    const alternativeSourcePrice = parseFloat(await cryptoPrice('MATIC'));
+    const alternativeSourcePrice = parseFloat(await cryptoPrice('ICP'));
 
     const currentCandle = candles[0];
 
     expect(currentCandle.open_timestamp).toBeGreaterThan(candles[776].open_timestamp);
     
-    const tolerance = parseFloat(process.env.TEST_PRICE_CHECK_TOLERANCE);
+    const tolerance = parseFloat(process.env.TEST_PRICE_CHECK_TOLERANCE ?? '0.1');
     const ceilingPrice = alternativeSourcePrice*(1+tolerance);
     const floorPrice = alternativeSourcePrice*(1-tolerance);
+
 
     expect(currentCandle.close).toBeGreaterThanOrEqual(floorPrice);
     expect(currentCandle.close).toBeLessThanOrEqual(ceilingPrice);
@@ -49,7 +49,7 @@ test('get MATIC candles', async () => {
 
 test('get XRP 1d candles', async () => {
     const limit = 14;
-    const candles: TickerCandle[] | null  = await exchange.fetchCandles('tXRPUSD', 1440,limit);
+    const candles: TickerCandle[] | null  = await exchange.fetchCandles('XRPUSDT', 1440,limit);
     
     expect(candles).not.toBeNull();
     
@@ -58,9 +58,9 @@ test('get XRP 1d candles', async () => {
 
 
 
-test('get XRP 1d candles', async () => {
-    const limit = 300;
-    const candles: TickerCandle[] | null  = await exchange.fetchCandles('tXRPUSD', 10080,limit);
+test('get XRP 1week candles', async () => {
+    const limit = 65;
+    const candles: TickerCandle[] | null  = await exchange.fetchCandles('XRPUSDT', 10080,limit);
     
     expect(candles).not.toBeNull();
     
@@ -68,4 +68,3 @@ test('get XRP 1d candles', async () => {
 
     console.log('oldest candle close', candles[limit-1]);
 });
-*/

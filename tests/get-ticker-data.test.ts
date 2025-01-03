@@ -20,6 +20,10 @@ test('get BTC ticker data', async () => {
 
     const priceData = response?.data;
 
+    if (!priceData) {
+        throw "PriceData is undefined";
+    }
+
     expect(priceData).not.toBeFalsy();
     expect(priceData?.current).not.toBeFalsy();
     expect(priceData?.quote_volume).not.toBeFalsy();
@@ -27,10 +31,7 @@ test('get BTC ticker data', async () => {
 
     const alternativeSourcePrice = parseFloat(await cryptoPrice('BTC'));
     
-    const exchangePrice = priceData?.current*1;
-    
-    console.log('exchangePrice', exchangePrice);
-    console.log('alternativeSourcePrice', alternativeSourcePrice);
+    const exchangePrice = priceData.current*1;
     
     const tolerance = parseFloat(process.env.TEST_PRICE_CHECK_TOLERANCE ?? 0.01);
     const ceilingPrice = alternativeSourcePrice*(1+tolerance);
