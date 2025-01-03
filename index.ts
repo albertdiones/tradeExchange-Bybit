@@ -68,7 +68,6 @@ export class Bybit implements TickerFetcher {
         
         return this._getMarketTickers().then(
                 ({response}) => {
-                    console.log(response);
                     return {
                         data: response.result.list.filter(
                             (ticker: {symbol: string }) => ticker.symbol === symbol
