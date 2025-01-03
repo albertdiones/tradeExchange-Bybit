@@ -1,27 +1,38 @@
 
 import type { AssetHolding, AssetWallet, CandleFetcher, Exchange, TickerFetcher } from 'tradeexchanges';
 import type { TickerData } from 'tradeexchanges/tradingCandles';
+import HttpClient from 'nonChalantJs';
 
 
 export class Bybit implements TickerFetcher {
 
 
-    client;
+    client: HttpClient;
     options;
 
 
-    constructor(client: any, options: any) {
+    constructor(client: HttpClient, options: any) {
         this.client = client;
         this.options = options;
     }
 
-    async getTickerSymbols(): Promise<string[]> {
-        return [
-            'BTCUSDT'
-        ];
+    _getMarketTickers() {
+        return this.client.getWithCache(
+            'https://api.bybit.com/v5/market/tickers?category=spot'
+        );
     }
 
-    getAssetDefaultTickerSymbol(assetSymbol: string) {
+    async getTickerSymbols(): Promise<string[]> {
+        return this._getMarketTickers().then(
+            ({response}) => {
+                return response.result.list.map(
+                    (ticker: {symbol: string }) => ticker.symbol
+                )
+            }
+        );
+    }
+
+    getAssetDefaultTickerSymbol(assetSymbol: string): string {
         return assetSymbol + 'USDT';
     }
 
