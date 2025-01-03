@@ -2,6 +2,7 @@ import HttpClient from "nonChalantJs";
 import { Bybit } from "../index";
 
 import Logger from 'add_logger';
+import { PaddedScheduleManager } from "nonChalantJs/scheduleManager";
 
 
 export class CacheViaNothing {
@@ -21,8 +22,7 @@ export const exchange = new Bybit(
     new HttpClient({
         logger: console,
         cache: new CacheViaNothing(),
-        minTimeoutPerRequest: 500,
-        maxRandomPreRequestTimeout: 0,
+        scheduleManager: new PaddedScheduleManager(500, 0)
     }),
     {
         logger: new Logger('bybit'),
