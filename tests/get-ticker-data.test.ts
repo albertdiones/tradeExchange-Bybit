@@ -2,7 +2,7 @@ import {exchange} from "./setup";
 import {describe, expect, test} from '@jest/globals';
 
 
-/*
+
 async function cryptoPrice(asset: string): Promise<string> {
     return fetch("https://cryptoprices.cc/"+asset+"/").then(
         r => r.text()
@@ -29,13 +29,14 @@ test('get BTC ticker data', async () => {
     
     const exchangePrice = priceData?.current*1;
     
-    const tolerance = parseFloat(process.env.TEST_PRICE_CHECK_TOLERANCE);
+    console.log('exchangePrice', exchangePrice);
+    console.log('alternativeSourcePrice', alternativeSourcePrice);
+    
+    const tolerance = parseFloat(process.env.TEST_PRICE_CHECK_TOLERANCE ?? 0.01);
     const ceilingPrice = alternativeSourcePrice*(1+tolerance);
     const floorPrice = alternativeSourcePrice*(1-tolerance);
 
     expect(exchangePrice).toBeGreaterThanOrEqual(floorPrice);
     expect(exchangePrice).toBeLessThanOrEqual(ceilingPrice);
 
-    console.log(exchangePrice, alternativeSourcePrice);
 });
-*/
